@@ -1,0 +1,56 @@
+import datetime
+import json
+
+class LegActivityTracker:
+    def __init__(self):
+        self.activities = []
+        self.progress = []
+
+    def log_activity(self, activity, duration, intensity):
+        entry = {
+            "date": datetime.date.today().strftime("%Y-%m-%d"),
+            "activity": activity,
+            "duration": duration,  # in minutes
+            "intensity": intensity  # scale of 1-10
+        }
+        self.activities.append(entry)
+        print(f"Activity logged: {entry}")
+
+    def track_progress(self, measurement, note=None):
+        entry = {
+            "date": datetime.date.today().strftime("%Y-%m-%d"),
+            "measurement": measurement,  # e.g., circumference in cm
+            "note": note
+        }
+        self.progress.append(entry)
+        print(f"Progress logged: {entry}")
+
+    def save_data(self, filename="leg_tracker_data.json"):
+        data = {"activities": self.activities, "progress": self.progress}
+        with open(filename, "w") as f:
+            json.dump(data, f, indent=4)
+        print(f"Data saved to {filename}")
+
+    def load_data(self, filename="leg_tracker_data.json"):
+        try:
+            with open(filename, "r") as f:
+                data = json.load(f)
+            self.activities = data["activities"]
+            self.progress = data["progress"]
+            print("Data loaded successfully")
+        except FileNotFoundError:
+            print("No data file found. Starting fresh.")
+
+# Example usage
+tracker = LegActivityTracker()
+tracker.load_data()
+
+# Log activities
+tracker.log_activity("Leg stretches", 15, 5)
+tracker.log_activity("Cycling", 30, 7)
+
+# Log progress
+tracker.track_progress(34.5, "Measured circumference of thigh")
+
+# Save data
+tracker.save_data()
